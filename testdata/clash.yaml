@@ -1,0 +1,21 @@
+proxies:
+  - name: "🇯🇵 日本专线-0.1倍率"
+    type: ss
+    server: 192.0.2.1
+    port: 8388
+    cipher: aes-256-gcm
+    password: "testpass"
+  - name: "🇭🇰 香港高速03|BGP"
+    type: vmess
+    server: 198.51.100.2
+    port: 443
+    uuid: 11111111-2222-3333-4444-555555555555
+    alterId: 0
+    cipher: auto
+    tls: true
+  - name: "🇸🇬 新加坡节点"
+    type: trojan
+    server: 203.0.113.3
+    port: 443
+    password: "trojanpass"
+    sni: example.com

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 猫尾速度弧图标（glm-5.2 生成 SVG 转换），品牌红背景 + 白色猫 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.60"
+        android:scaleY="0.60">
+
+        <!-- 身体 -->
+        <path
+            android:pathData="M332,640 a180,150 0 1,0 360,0 a180,150 0 1,0 -360,0 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 头 -->
+        <path
+            android:pathData="M392,430 a120,120 0 1,0 240,0 a120,120 0 1,0 -240,0 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 左耳 -->
+        <path
+            android:pathData="M430,360 L400,250 L490,330 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 右耳 -->
+        <path
+            android:pathData="M594,360 L624,250 L534,330 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 左内耳 -->
+        <path
+            android:pathData="M438,345 L425,290 L470,332 Z"
+            android:fillColor="#D63031" />
+        <!-- 右内耳 -->
+        <path
+            android:pathData="M586,345 L599,290 L554,332 Z"
+            android:fillColor="#D63031" />
+        <!-- 眼睛 -->
+        <path
+            android:pathData="M454,430 a16,16 0 1,0 32,0 a16,16 0 1,0 -32,0 Z"
+            android:fillColor="#FFFFFF" />
+        <path
+            android:pathData="M538,430 a16,16 0 1,0 32,0 a16,16 0 1,0 -32,0 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 鼻子 -->
+        <path
+            android:pathData="M505,458 L512,470 L519,458 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 嘴 -->
+        <path
+            android:pathData="M512,470 Q495,488 482,478"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M512,470 Q529,488 542,478"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round" />
+        <!-- 胡须 -->
+        <path
+            android:pathData="M380,450 L430,452"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M380,470 L430,466"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M644,450 L594,452"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M644,470 L594,466"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5"
+            android:strokeLineCap="round" />
+        <!-- 前爪 -->
+        <path
+            android:pathData="M434,770 a36,22 0 1,0 72,0 a36,22 0 1,0 -72,0 Z"
+            android:fillColor="#FFFFFF" />
+        <path
+            android:pathData="M518,770 a36,22 0 1,0 72,0 a36,22 0 1,0 -72,0 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 尾巴：速度弧线 -->
+        <path
+            android:pathData="M690,700 A240,240 0 0 1 250,560"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="34"
+            android:strokeLineCap="round" />
+        <!-- 尾端圆点 -->
+        <path
+            android:pathData="M230,560 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0 Z"
+            android:fillColor="#FFFFFF" />
+        <!-- 速度刻度线 -->
+        <path
+            android:pathData="M690,700 L705,725"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M688,590 L708,588"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M650,480 L666,468"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M572,398 L572,376"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M462,380 L452,360"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M355,430 L335,418"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M290,532 L268,528"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M250,560 L232,574"
+            android:strokeColor="#D63031"
+            android:strokeWidth="10"
+            android:strokeLineCap="round" />
+
+    </group>
+</vector>

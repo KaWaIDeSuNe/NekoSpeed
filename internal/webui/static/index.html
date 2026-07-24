@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NekoSpeed 机场测速</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #f5f7fa;
+    color: #333; line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h1 .tag { font-size: 13px; color: #888; font-weight: normal; margin-left: 8px; }
+  .card {
+    background: rgba(255,255,255,0.92); border: 1px solid rgba(229,233,240,0.8); border-radius: 10px;
+    padding: 20px; margin-top: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  }
+  label.field { display: block; margin-bottom: 12px; font-size: 14px; color: #555; }
+  label.field span { display: block; margin-bottom: 4px; font-weight: 600; }
+  input[type=text], input[type=number] {
+    width: 100%; padding: 8px 10px; border: 1px solid #d0d5dd; border-radius: 6px;
+    font-size: 14px; background: #fff;
+  }
+  input:focus { outline: none; border-color: #4f8cff; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row label.field { flex: 1; min-width: 110px; }
+  .checks { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; font-size: 14px; }
+  .checks label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  button {
+    background: #4f8cff; color: #fff; border: none; border-radius: 6px;
+    padding: 10px 28px; font-size: 15px; cursor: pointer;
+  }
+  button:disabled { background: #a9c4f5; cursor: not-allowed; }
+  #log {
+    background: #1e2430; color: #c9e1ff; border-radius: 8px; padding: 12px 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px;
+    height: 260px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+  }
+  #log:empty::before { content: "等待任务开始…"; color: #5a6678; }
+  #summary { font-size: 15px; margin-bottom: 12px; }
+  #summary .ok { color: #1a9e54; font-weight: 600; }
+  #summary .fail { color: #d64545; font-weight: 600; }
+  .thumbs { display: flex; gap: 12px; flex-wrap: wrap; }
+  .thumbs a { display: block; }
+  .thumbs img {
+    width: 220px; border: 1px solid #e0e4ea; border-radius: 8px; background: #fff;
+    cursor: zoom-in; transition: transform .15s;
+  }
+  .thumbs img:hover { transform: scale(1.03); }
+  .json-link { display: inline-block; margin-top: 12px; font-size: 14px; }
+  #lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.82);
+    z-index: 10; cursor: zoom-out; text-align: center; overflow: auto;
+  }
+  #lightbox img { max-width: 96%; margin: 2% auto; border-radius: 6px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>NekoSpeed<span class="tag">机场测速 · 内嵌 Web UI</span></h1>
+
+  <div class="card">
+    <label class="field">
+      <span>订阅链接 / 本地文件路径</span>
+      <input type="text" id="source" placeholder="https://example.com/sub 或 testdata/clash.yaml">
+    </label>
+    <div class="checks" id="tests">
+      <label><input type="checkbox" value="speed" checked> 测速</label>
+      <label><input type="checkbox" value="media" checked> 流媒体</label>
+      <label><input type="checkbox" value="ai" checked> AI 解锁</label>
+      <label><input type="checkbox" value="topo" checked> 线路分析</label>
+      <label><input type="checkbox" value="nat"> NAT 类型</label>
+    </div>
+    <div class="row">
+      <label class="field"><span>线程数</span><input type="number" id="threads" value="8" min="1" max="32"></label>
+      <label class="field"><span>时长(秒)</span><input type="number" id="duration" value="10" min="1" max="30"></label>
+      <label class="field"><span>并发节点数</span><input type="number" id="concurrency" value="8" min="1"></label>
+      <label class="field"><span>延迟次数</span><input type="number" id="pingCount" value="4" min="1"></label>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="single"> 单线程测速</label>
+    </div>
+    <label class="field">
+      <span>节点过滤正则（可选）</span>
+      <input type="text" id="filter" placeholder="如：香港|日本">
+    </label>
+    <label class="field">
+      <span>订阅拉取代理（可选，订阅被墙时填写）</span>
+      <input type="text" id="proxy" placeholder="如：http://127.0.0.1:7890 或 socks5://127.0.0.1:1080">
+    </label>
+    <button id="runBtn">开始测试</button>
+  </div>
+
+  <div class="card">
+    <div id="log"></div>
+  </div>
+
+  <div class="card hidden" id="resultCard">
+    <div id="summary"></div>
+    <div class="thumbs" id="thumbs"></div>
+    <a class="json-link hidden" id="jsonLink" download>⬇ 下载 JSON 结果</a>
+  </div>
+</div>
+
+<div id="lightbox"><img id="lightboxImg" alt=""></div>
+
+<script>
+(function () {
+  var runBtn = document.getElementById('runBtn');
+  var log = document.getElementById('log');
+  var resultCard = document.getElementById('resultCard');
+  var summary = document.getElementById('summary');
+  var thumbs = document.getElementById('thumbs');
+  var jsonLink = document.getElementById('jsonLink');
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+
+  function appendLog(line) {
+    log.textContent += line + "\n";
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function onDone(evt) {
+    runBtn.disabled = false;
+    runBtn.textContent = '开始测试';
+    resultCard.classList.remove('hidden');
+    thumbs.innerHTML = '';
+    jsonLink.classList.add('hidden');
+    if (!evt.ok) {
+      summary.innerHTML = '<span class="fail">任务失败：' + escapeHtml(evt.error || '未知错误') + '</span>';
+      return;
+    }
+    summary.innerHTML = '完成：<span class="ok">成功 ' + evt.succeeded + '/' + evt.total +
+      '</span>，耗时 ' + evt.elapsed;
+    (evt.files || []).forEach(function (name) {
+      if (/_result\.json$/.test(name)) {
+        jsonLink.href = '/files/' + encodeURIComponent(name);
+        jsonLink.classList.remove('hidden');
+      } else if (/\.png$/.test(name)) {
+        var a = document.createElement('a');
+        var img = document.createElement('img');
+        img.src = '/files/' + encodeURIComponent(name);
+        img.alt = name;
+        img.title = name + '（点击放大）';
+        img.addEventListener('click', function () {
+          lightboxImg.src = img.src;
+          lightbox.style.display = 'block';
+        });
+        a.appendChild(img);
+        thumbs.appendChild(a);
+      }
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  lightbox.addEventListener('click', function () { lightbox.style.display = 'none'; });
+
+  var es = new EventSource('/api/events');
+  es.onmessage = function (e) { appendLog(e.data); };
+  es.addEventListener('done', function (e) {
+    try { onDone(JSON.parse(e.data)); } catch (err) { appendLog('解析结果失败: ' + err); }
+  });
+  es.onerror = function () { /* 浏览器自动重连 */ };
+
+  runBtn.addEventListener('click', function () {
+    var source = document.getElementById('source').value.trim();
+    if (!source) { alert('请填写订阅链接或本地文件路径'); return; }
+    var tests = [];
+    document.querySelectorAll('#tests input:checked').forEach(function (cb) { tests.push(cb.value); });
+    if (!tests.length) { alert('请至少选择一项测试'); return; }
+
+    var body = {
+      source: source,
+      tests: tests.join(','),
+      threads: parseInt(document.getElementById('threads').value, 10) || 8,
+      duration: parseInt(document.getElementById('duration').value, 10) || 10,
+      concurrency: parseInt(document.getElementById('concurrency').value, 10) || 8,
+      pingCount: parseInt(document.getElementById('pingCount').value, 10) || 4,
+      single: document.getElementById('single').checked,
+      filter: document.getElementById('filter').value.trim(),
+      proxy: document.getElementById('proxy').value.trim()
+    };
+
+    log.textContent = '';
+    resultCard.classList.add('hidden');
+    fetch('/api/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (resp) {
+      if (resp.status === 409) { alert('已有任务在运行中，请等待完成'); return null; }
+      if (!resp.ok) { return resp.text().then(function (t) { throw new Error(t); }); }
+      runBtn.disabled = true;
+      runBtn.textContent = '测试运行中…';
+      return null;
+    }).catch(function (err) {
+      if (err) { appendLog('启动失败: ' + err.message); }
+    });
+  });
+})();
+</script>
+<script>
+(function () {
+  fetch('/api/random-bg')
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d.url) return;
+      document.body.style.backgroundImage = 'url("' + d.url + '")';
+      document.body.style.backgroundRepeat = 'no-repeat';
+      document.body.style.backgroundPosition = 'center center';
+      document.body.style.backgroundAttachment = 'fixed';
+      document.body.style.backgroundSize = 'cover';
+    });
+})();
+</script>
+</body>
+</html>
