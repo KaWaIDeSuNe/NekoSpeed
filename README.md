@@ -1,5 +1,7 @@
 # NekoSpeed
 
+<img src="docs/nekospeed-icon.png" width="96" height="96" align="left" alt="NekoSpeed 图标">
+
 机场（代理订阅）测速工具。参考 [miaospeed](https://github.com/AirportR/miaospeed) 架构（mihomo 内核作拨号层），输入订阅链接或 Clash 配置，一次性跑完测试并输出 MiaoKo 风格的 PNG 结果图 + JSON。
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
