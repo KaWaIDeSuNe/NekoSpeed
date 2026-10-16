@@ -209,19 +209,5 @@
   });
 })();
 </script>
-<script>
-(function () {
-  fetch('/api/random-bg')
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (!d.url) return;
-      document.body.style.backgroundImage = 'url("' + d.url + '")';
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.backgroundPosition = 'center center';
-      document.body.style.backgroundAttachment = 'fixed';
-      document.body.style.backgroundSize = 'cover';
-    });
-})();
-</script>
 </body>
 </html>

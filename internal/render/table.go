@@ -7,8 +7,6 @@ import (
 	"image/draw"
 	"math"
 
-	"nekospeed/internal/assets"
-
 	xdraw "golang.org/x/image/draw"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
@@ -136,15 +134,7 @@ func renderTables(meta Meta, title, footer1 string, tables []*Table) (*image.RGB
 	imgH += 3*footerLineH + margin
 
 	p.img = image.NewRGBA(image.Rect(0, 0, imgW, imgH))
-	// 优先使用内嵌背景图，并叠一层主题底色半透明覆盖以保证可读性。
-	if bgImg, _, err := assets.RandomBackgroundImage(); err == nil {
-		xdraw.BiLinear.Scale(p.img, p.img.Bounds(), bgImg, bgImg.Bounds(), draw.Src, nil)
-		base := color.NRGBAModel.Convert(theme.ImageBG).(color.NRGBA)
-		base.A = 205
-		draw.Draw(p.img, p.img.Bounds(), image.NewUniform(base), image.Point{}, draw.Over)
-	} else {
-		draw.Draw(p.img, p.img.Bounds(), image.NewUniform(theme.ImageBG), image.Point{}, draw.Src)
-	}
+	draw.Draw(p.img, p.img.Bounds(), image.NewUniform(theme.ImageBG), image.Point{}, draw.Src)
 	drawPattern(p.img, theme.Pattern, theme.PatternColor)
 
 	// 图标题

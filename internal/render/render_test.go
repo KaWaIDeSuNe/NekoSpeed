@@ -43,7 +43,7 @@ func TestLocalISPTitle(t *testing.T) {
 	}
 }
 
-func TestRenderTablesWithBackgroundImage(t *testing.T) {
+func TestRenderTables(t *testing.T) {
 	img, err := renderTables(Meta{
 		Version:   "0.1.0",
 		Threads:   1,
@@ -81,5 +81,5 @@ func TestRenderTablesWithBackgroundImage(t *testing.T) {
 	if info.Size() == 0 {
 		t.Fatal("渲染图片为空")
 	}
-	t.Logf("背景图渲染测试通过，图片: %s, 大小: %d bytes", path, info.Size())
+	t.Logf("渲染测试通过，图片: %s, 大小: %d bytes", path, info.Size())
 }

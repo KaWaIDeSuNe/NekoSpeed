@@ -16,7 +16,6 @@ import (
 	"sync"
 	"time"
 
-	"nekospeed/internal/assets"
 	"nekospeed/internal/runner"
 )
 
@@ -34,8 +33,6 @@ func Serve(addr string) error {
 	s := &server{hub: newHub()}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", s.handleIndex)
-	mux.Handle("GET /bg/", assets.BGHandler())
-	mux.HandleFunc("GET /api/random-bg", assets.RandomBGHandler())
 	mux.HandleFunc("POST /api/run", s.handleRun)
 	mux.HandleFunc("GET /api/events", s.handleEvents)
 	mux.HandleFunc("GET /files/{name}", s.handleFiles)
